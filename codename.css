@@ -1,0 +1,43 @@
+body, html{
+    height: 100%;
+    margin: 0;
+}
+body{
+    display:grid;
+    place-items:center;
+    min-height: 100vh;
+}
+h1{
+    text-align: center;
+    margin-bottom:70px;
+}
+.container{
+    place-items: center;
+    margin-bottom:150px;
+}
+.outputBox{
+    display:grid;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+.outputBox input{
+    margin-bottom: 6px;
+}
+
+@media (min-width: 700px){
+    .box{
+        display:grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        place-items: center;
+        margin-top:30px;
+    }
+
+}
+
+@media (max-width: 699px){
+    .box{
+        place-items: center;
+        display:grid;
+        grid-template-rows: 1fr 1fr 1fr;
+        margin-top:30px;
+    } 
+}

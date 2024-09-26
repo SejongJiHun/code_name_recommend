@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="homepage.css">
+    <title>Get Name</title>
+</head>
+<body class="body">
+    <div class="container">
+        <h1 class="logo">Code Name</h1>
+        <div class="box">
+            <div class="inputBox">
+                <input type="text" id="inputText" placeholder="Input Text">
+                <br>
+                
+                <select name="langList" id="langList">
+                    <option value="python">Python</option>
+                    <option value="c">C</option>
+                    <option value="javaScript">JavaScript</option>
+                    <option value="java">Java</option>
+                    <option value="c#">C#</option>
+                    <option value="c++">C++</option>
+                </select>
+            </div>
+            <div class="changeBox">
+                <button type="button" id="changeButton">Change</button>
+            </div>
+            <div class="outputBox">
+                <input type="text" id="outputText1" placeholder="">
+                <input type="text" id="outputText2" placeholder="">
+                <input type="text" id="outputText3" placeholder="">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('#changeButton').addEventListener('click', async () => {
+            const inputText = document.querySelector('#inputText').value;
+            const lang = document.querySelector('#langList').value;
+    
+            try {
+                const response = await fetch('http://localhost:3000/recommend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ inputText, lang }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+    
+                const data = await response.json();
+    
+                // 응답의 names 배열을 확인하고, 최대 3개의 이름만 사용
+                if (Array.isArray(data.names) && data.names.length > 0) {
+                    const limitedNames = data.names.slice(0, 3); // 최대 3개의 변수 이름만 가져옴
+                    
+                    // 각 변수 이름을 입력 필드에 할당 (최대 3개)
+                    document.querySelector('#outputText1').value = limitedNames[0] || ''; // 존재하면 넣고 없으면 빈 문자열
+                    document.querySelector('#outputText2').value = limitedNames[1] || '';
+                    document.querySelector('#outputText3').value = limitedNames[2] || '';
+                } else {
+                    throw new Error('No variable names found');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // 사용자에게 오류를 알리는 방법 추가 가능
+            }
+        });
+    </script>
+    
+</body>
+</html>
