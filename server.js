@@ -17,7 +17,7 @@ app.post('/recommend', async (req, res) => {
         const response = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
-                model: 'gpt-3.5-turbo', 
+                model: 'gpt-4o-mini',
                 messages: [
                     {
                         role: 'system',
@@ -25,33 +25,39 @@ app.post('/recommend', async (req, res) => {
                     },
                     {
                         role: 'user',
-                        content: `Suggest three variable names for the following input in ${lang}: ${inputText}`
+                        content: `Please suggest exactly three variable names for the following input in ${lang} without any additional explanation or comments: ${inputText}. Only return the names, separated by commas.`
                     }
                 ],
                 max_tokens: 50
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, // 환경 변수에서 API 키 로드
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
                     'Content-Type': 'application/json'
                 }
             }
         );
 
-        const gptOutput = response.data.choices[0].message.content
-            .split("\n")
-            .filter(name => name.trim() !== "");
-        
+        console.log(response.data); // 응답을 콘솔에 출력
+        // GPT 응답을 쉼표로 나누어 처리
+        const gptOutput = response.data.choices[0].message.content.split(',').map(name => name.trim());
+
         if (gptOutput.length === 0) {
             return res.status(404).send('No variable names found');
         }
-        
-        res.json({ names: gptOutput });
+
+        // 최대 3개의 변수 이름만 반환
+        const limitedNames = gptOutput.slice(0, 3);
+
+        res.json({ names: limitedNames });
     } catch (error) {
         console.error('Error fetching variable names:', error.message);
         res.status(500).send('Error fetching variable names');
     }
 });
+
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
